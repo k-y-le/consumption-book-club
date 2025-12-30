@@ -14,24 +14,31 @@ body {
 }
 
 .container {
-    display: flex;
+    position: relative;
     height: 100vh;
     width: 100%;
+    overflow: hidden;
 }
 
 .left-section {
-    width: 50%;
-    padding: 40px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 65%;
+    height: 100vh;
+    padding: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
+    z-index: 1;
 }
 
 .title {
-    font-size: 8vw;
-    line-height: 1.1;
+    font-size: 14vw;
+    line-height: 0.75;
     text-align: left;
     margin-bottom: 30px;
+    letter-spacing: -0.06em;
 }
 
 .description {
@@ -39,6 +46,7 @@ body {
     text-align: left;
     line-height: 1.6;
     margin-bottom: 20px;
+    width: 80%;
 }
 
 .credits {
@@ -57,19 +65,45 @@ body {
 }
 
 .right-section {
-    width: 50%;
-    padding: 40px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 60%;
+    height: 100vh;
+    padding: 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    z-index: 2;
 }
 
-.flyer-image {
+.image-carousel {
+    position: relative;
     width: 100%;
-    max-width: 500px;
-    height: auto;
+    max-width: 1000px;
     margin-bottom: 30px;
+}
+
+.carousel-image {
+    width: 100%;
+    height: auto;
+    display: none;
+    position: relative;
+}
+
+.carousel-image.active {
+    display: block;
+}
+
+.spiral-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
 }
 
 .newsletter-container {
@@ -125,4 +159,104 @@ body {
 
 .btn:hover {
     opacity: 0.8;
+}
+
+/* Hide mobile elements on desktop */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+/* Mobile and Tablet Responsive Styles */
+@media screen and (max-width: 1024px) {
+    /* Show mobile, hide desktop */
+    .mobile-only {
+        display: block;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+    body {
+        height: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .left-section {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        order: 1;
+    }
+
+    .title {
+        font-size: 20vw;
+        line-height: 0.95;
+        margin-bottom: 20px;
+    }
+
+    .description {
+        width: 100%;
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+
+    .credits {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    .right-section {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        order: 2;
+    }
+
+    .image-carousel {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .newsletter-container {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .mobile-only.newsletter-container {
+        display: flex;
+    }
+
+    .email-input {
+        width: 100%;
+        min-width: auto;
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+
+    .btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+
+    .checkmark {
+        position: static;
+        margin-top: 10px;
+    }
 }
