@@ -31,6 +31,25 @@ document.addEventListener('DOMContentLoaded', function() {
     setupCarousel('.mobile-only.image-carousel');
     setupCarousel('.desktop-only.image-carousel');
 
+    // Setup previous event carousel
+    function setupPreviousCarousel() {
+        const carouselImages = document.querySelectorAll('.previous-carousel-image');
+        if (carouselImages.length === 0) return;
+
+        let currentImageIndex = 0;
+
+        function rotateImages() {
+            carouselImages[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + 1) % carouselImages.length;
+            carouselImages[currentImageIndex].classList.add('active');
+        }
+
+        // Rotate images every 4 seconds (4000ms)
+        setInterval(rotateImages, 4000);
+    }
+
+    setupPreviousCarousel();
+
     // Responsive title sizing for mobile
     function adjustTitleSize() {
         const title = document.querySelector('.title');
