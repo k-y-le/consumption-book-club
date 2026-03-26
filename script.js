@@ -1,166 +1,205 @@
-// JavaScript for Consumption Book Club
-
-// REPLACE THIS URL with your Google Apps Script web app URL after deployment
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyH4YPqNGVa3tZA5VOQWcDr-mMf49h8QyL0SPTA-3aFqC1FCv6YDYDat8oWmcUvUbGz/exec';
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Image carousel functionality - separate for mobile and desktop
+const eventsData = {
+    'annihilation': {
+        title: 'Annihilation',
+        subtitle: 'by Jeff VanderMeer — April 26, 2026 at Index Greenpoint',
+        flyer: 'img/cbc3_flyer.png',
+        description: `<p>Celebrate Earth day and all the new things growing in spring through Jeff VanderMeer’s surreal story, <i>Annihilation</i>. In this book, we follow a biologist who is keeping a diary to record her experience while investigating a strange ecological phenomenon called Area X, located within an ever expanding boundary known as “The Shimmer” that threatens to take over the world, where chaotic and rapid mutations unfold. The few who have successfully entered and returned have come back changed, with limited ability to explain anything that went on while in the boundaries. Our unnamed narrator goes in blind with six other scientists and attempts to gain some understanding on the page.</p>
+        <p>The theme for this book club will be “Re-Generation,” looking at evolution of thought and materials, symbiosis, and our intrinsic link to our world and one another. We will explore a vegan tasting garden of verdant, springy meals (and cocktails!), creating our own responses and observations to their textures, flavors, appearance, and more in a guided, generative writing/creative workshop. Our diaries will be written, drawn, or sculpted on paper made from the waste of the very same food we are responding to. This event will also include a hands on paper-making workshop with artist Lily Massee to get physically connected to our materials. After an initial round of writing responses, we will then share our work with one another and respond to fellow participants' work, creating an “exquisite corpse” that links us to our food, our waste, our community, and our creative practices. This event is for artists, creatives, scientists, and tasters of all kinds of experience levels. Come one, come all!</p>
+        <p>And as always, come hungry. We promise you will leave full of good food, new connections, and the first sprouts of budding projects to rejuvenate your creative practices. Participants will also take home a commemorative “cook book” zine with recipes, illustrations, and writings around the book and theme—as well as your own, hand-made paper!</p>`,
+        gallery: []
+    },
+    'paradise-rot': {
+        title: 'Paradise Rot',
+        subtitle: 'by Jenny Hval — February 15, 2026 at Index Greenpoint',
+        flyer: 'img/cbc2_flyer.png',
+        description: `
+            <p>This session pairs a guided sourdough pretzel-making workshop with an open group discussion of Paradise Rot, Jenny Hval's twisted novella of intimacy and decomposition. Our theme is "Consumed by You," and we'll discuss the crushes that can consume us, the fine line between disgust and pleasure, the sickly sweet obsession that comes with the honeymoon phase, and how to nurture and mature those feelings instead of letting them go to rot.</p>
+            <p>Participants will…</p>
+            <p>Learn how to proof, shape, and bake your own sourdough pretzels (and take some home!)<br>
+            Snack on a fermented spread of cheese, pickles, beer, and kombucha<br>
+            Engage in guided discussion on Paradise Rot—no prior reading required<br>
+            Receive a printed zine of recipes, writing, and artwork inspired by the themes.</p>
+            <p>Through these events, we help shape counter-consumer-culture, where instead of feeling driven towards buying into short lived products and experiences in order to feel connected to each other, we intentionally spend our time and attention towards consuming that which actually feeds us: connecting with our community, expanding our thoughts, and doing both over delicious, thoughtful, and satiating meals.</p>
+        `,
+        gallery: []
+    },
+    'land-of-milk-and-honey': {
+        title: 'Land of Milk and Honey',
+        subtitle: 'by C. Pam Zhang — December 5, 2025 at telos.haus',
+        flyer: 'img/cbc1_flyer.png',
+        description: `
+            <p>Land of Milk and Honey by C. Pam Zhang is a beautiful novel that explores the risks that come from "overconsumption." In a near-dystopian-future, pollution has covered most of the earth in a thick smog, leading to a world-wide famine due to a mass extinction among crops and animals. While most of society subsists on genetically modified mung-protein-flour that can keep them alive, the nameless chef narrator of this story hungers for more.</p>
+            <p>She finds her way into an exclusive research facility on the top of a mountain in Italy, where the rich live above the fog and fund the scientists working to bring back extinct species in exchange for elaborate meals and the certainty of their futures. As the new head chef, our narrator explores her own relationship with pleasure, pain, indulgence, want, and hunger.</p>
+            <p class="credits">Photography by <a href="https://www.eleanorpetry.com/" target="_blank">Eleanor Petry</a></p>
+            `,
+        gallery: []
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ── Mobile carousel ──────────────────────────────────────────────
     function setupCarousel(containerSelector) {
         const container = document.querySelector(containerSelector);
         if (!container) return;
-
-        const carouselImages = container.querySelectorAll('.carousel-image');
-        let currentImageIndex = 0;
-
-        function rotateImages() {
-            // Remove active class from current image
-            carouselImages[currentImageIndex].classList.remove('active');
-
-            // Move to next image
-            currentImageIndex = (currentImageIndex + 1) % carouselImages.length;
-
-            // Add active class to new image
-            carouselImages[currentImageIndex].classList.add('active');
-        }
-
-        // Rotate images every 1 second (1000ms)
-        setInterval(rotateImages, 1000);
+        const images = container.querySelectorAll('.carousel-image');
+        let idx = 0;
+        setInterval(() => {
+            images[idx].classList.remove('active');
+            idx = (idx + 1) % images.length;
+            images[idx].classList.add('active');
+        }, 1000);
     }
-
-    // Setup both carousels
     setupCarousel('.mobile-only.image-carousel');
-    setupCarousel('.desktop-only.image-carousel');
+    setupCarousel('.desktop-carousel');
 
-    // Setup previous event carousel
-    function setupPreviousCarousel() {
-        const carouselImages = document.querySelectorAll('.previous-carousel-image');
-        if (carouselImages.length === 0) return;
+    // ── Flyer hover / click ───────────────────────────────────────────
+    const mainTitle = document.getElementById('mainTitle');
+    const mainSubtitle = document.getElementById('mainSubtitle');
+    const defaultTitle = mainTitle.textContent;
+    const defaultSubtitle = mainSubtitle.textContent;
+    const defaultContent = document.getElementById('defaultContent');
+    const eventDetailContent = document.getElementById('eventDetailContent');
+    const desktopCarousel = document.querySelector('.desktop-carousel');
+    const mobileCarousel = document.querySelector('.mobile-only.image-carousel');
+    let activeEvent = null;
 
-        let currentImageIndex = 0;
-
-        function rotateImages() {
-            carouselImages[currentImageIndex].classList.remove('active');
-            currentImageIndex = (currentImageIndex + 1) % carouselImages.length;
-            carouselImages[currentImageIndex].classList.add('active');
-        }
-
-        // Rotate images every 4 seconds (4000ms)
-        setInterval(rotateImages, 4000);
+    function setTitle(text) {
+        mainTitle.classList.add('fading');
+        setTimeout(() => {
+            mainTitle.textContent = text;
+            mainTitle.classList.remove('fading');
+        }, 150);
     }
 
-    setupPreviousCarousel();
+    function setSubtitle(text) {
+        mainSubtitle.classList.add('fading');
+        setTimeout(() => {
+            mainSubtitle.textContent = text;
+            mainSubtitle.classList.remove('fading');
+        }, 150);
+    }
 
-    // Responsive title sizing for mobile
-    function adjustTitleSize() {
-        const title = document.querySelector('.title');
-        if (!title) return;
+    function populateDetail(eventKey) {
+        const event = eventsData[eventKey];
+        document.getElementById('eventDetailText').innerHTML = event.description;
+        const gallery = document.getElementById('eventGallery');
+        gallery.innerHTML = '';
+        event.gallery.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = event.title;
+            gallery.appendChild(img);
+        });
+    }
 
-        // Only adjust on mobile
-        if (window.innerWidth <= 1024) {
-            const container = title.parentElement;
-            const containerWidth = container.offsetWidth - 10; // Account for padding
+    function showDetail(eventKey) {
+        populateDetail(eventKey);
+        defaultContent.classList.add('hidden');
+        desktopCarousel.classList.add('hidden');
+        if (mobileCarousel) mobileCarousel.classList.add('hidden');
+        eventDetailContent.classList.remove('hidden');
+        setTitle(eventsData[eventKey].title);
+        setSubtitle(eventsData[eventKey].subtitle || '');
+    }
 
-            // Start with a large font size and reduce until it fits
-            let fontSize = 20; // Start at 20vw
-            title.style.fontSize = fontSize + 'vw';
+    function showIndex() {
+        eventDetailContent.classList.add('hidden');
+        defaultContent.classList.remove('hidden');
+        desktopCarousel.classList.remove('hidden');
+        if (mobileCarousel) mobileCarousel.classList.remove('hidden');
+        setTitle(defaultTitle);
+        setSubtitle(defaultSubtitle);
+        document.querySelectorAll('.flyer-img, .dock-img').forEach(i => i.classList.remove('active'));
+        activeEvent = null;
+    }
 
-            while (title.scrollWidth > containerWidth && fontSize > 10) {
-                fontSize -= 0.5;
-                title.style.fontSize = fontSize + 'vw';
+    // Desktop flyer hover/click
+    document.querySelectorAll('.flyer-img').forEach(img => {
+        img.addEventListener('mouseenter', () => {
+            showDetail(img.dataset.event);
+        });
+        img.addEventListener('mouseleave', () => {
+            if (activeEvent) {
+                showDetail(activeEvent);
+            } else {
+                showIndex();
             }
-        } else {
-            // Reset to CSS default on desktop
-            title.style.fontSize = '';
-        }
-    }
+        });
+        img.addEventListener('click', () => {
+            if (activeEvent === img.dataset.event) {
+                showIndex();
+            } else {
+                document.querySelectorAll('.flyer-img').forEach(i => i.classList.remove('active'));
+                img.classList.add('active');
+                activeEvent = img.dataset.event;
+                document.querySelector('.left-col').scrollTop = 0;
+            }
+        });
+    });
 
-    // Adjust on load and resize
-    adjustTitleSize();
-    window.addEventListener('resize', adjustTitleSize);
+    // Mobile dock click
+    document.querySelectorAll('.dock-img').forEach(img => {
+        img.addEventListener('click', () => {
+            if (activeEvent === img.dataset.event) {
+                showIndex();
+            } else {
+                document.querySelectorAll('.dock-img').forEach(i => i.classList.remove('active'));
+                img.classList.add('active');
+                activeEvent = img.dataset.event;
+                showDetail(img.dataset.event);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    });
 
-    // Newsletter functionality - function to handle email submission
+    // ── Newsletter ────────────────────────────────────────────────────
     async function handleEmailSubmit(emailInput, subscribeBtn, checkmark) {
         const email = emailInput.value.trim();
+        if (!email || !email.includes('@')) {
+            alert('Please enter a valid email address');
+            return;
+        }
 
-        if (email && email.includes('@')) {
-            // Disable button while submitting
-            subscribeBtn.disabled = true;
-            subscribeBtn.textContent = 'sending...';
+        subscribeBtn.disabled = true;
+        subscribeBtn.textContent = 'sending...';
 
-            try {
-                // Send email to Google Sheets via Apps Script
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Required for Google Apps Script
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: email })
-                });
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
 
-                // Note: no-cors mode means we can't read the response
-                // But the request will still be processed by Google Apps Script
-                console.log('Email submitted:', email);
+            subscribeBtn.style.display = 'none';
+            emailInput.style.display = 'none';
+            checkmark.style.display = 'block';
+            emailInput.value = '';
 
-                // Hide button and input, show checkmark
-                subscribeBtn.style.display = 'none';
-                emailInput.style.display = 'none';
-                checkmark.style.display = 'block';
-
-                // Clear the input
-                emailInput.value = '';
-
-                // Reset after a few seconds
-                setTimeout(() => {
-                    subscribeBtn.style.display = 'block';
-                    emailInput.style.display = 'block';
-                    checkmark.style.display = 'none';
-                    subscribeBtn.disabled = false;
-                    subscribeBtn.textContent = 'stay tuned';
-                }, 3000);
-
-            } catch (error) {
-                console.error('Error submitting email:', error);
-                alert('There was an error submitting your email. Please try again.');
+            setTimeout(() => {
+                subscribeBtn.style.display = 'block';
+                emailInput.style.display = 'block';
+                checkmark.style.display = 'none';
                 subscribeBtn.disabled = false;
                 subscribeBtn.textContent = 'stay tuned';
-            }
-        } else {
-            alert('Please enter a valid email address');
+            }, 3000);
+        } catch (err) {
+            console.error(err);
+            alert('There was an error submitting your email. Please try again.');
+            subscribeBtn.disabled = false;
+            subscribeBtn.textContent = 'stay tuned';
         }
     }
 
-    // Mobile newsletter form
     const subscribeBtn = document.getElementById('subscribeBtn');
     const emailInput = document.getElementById('emailInput');
     const checkmark = document.getElementById('checkmark');
 
-    if (subscribeBtn && emailInput && checkmark) {
-        subscribeBtn.addEventListener('click', async function() {
-            await handleEmailSubmit(emailInput, subscribeBtn, checkmark);
-        });
-
-        emailInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                subscribeBtn.click();
-            }
-        });
-    }
-
-    // Desktop newsletter form
-    const subscribeBtn2 = document.getElementById('subscribeBtn2');
-    const emailInput2 = document.getElementById('emailInput2');
-    const checkmark2 = document.getElementById('checkmark2');
-
-    if (subscribeBtn2 && emailInput2 && checkmark2) {
-        subscribeBtn2.addEventListener('click', async function() {
-            await handleEmailSubmit(emailInput2, subscribeBtn2, checkmark2);
-        });
-
-        emailInput2.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                subscribeBtn2.click();
-            }
-        });
+    if (subscribeBtn) {
+        subscribeBtn.addEventListener('click', () => handleEmailSubmit(emailInput, subscribeBtn, checkmark));
+        emailInput.addEventListener('keypress', e => { if (e.key === 'Enter') subscribeBtn.click(); });
     }
 });
