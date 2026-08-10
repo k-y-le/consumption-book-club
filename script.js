@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             images[idx].classList.remove('active');
             idx = (idx + 1) % images.length;
             images[idx].classList.add('active');
-        }, 1000);
+        }, 1500);
     }
 
     // ── Orb click → event detail ────────────────────────────────────
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function restartGalleryTimer() {
         clearInterval(galleryTimer);
-        galleryTimer = setInterval(() => showSlide(galleryIndex + 1), 2000);
+        galleryTimer = setInterval(() => showSlide(galleryIndex + 1), 1500);
     }
 
     function stopGalleryTimer() {
