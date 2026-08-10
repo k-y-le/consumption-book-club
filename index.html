@@ -5,74 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consumption Book Club</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        (function () {
+            var themes = [
+                { color: '#DB4044', spiral: 'img/spiral1.png', bg: 'img/cbc_bg_1.png' },
+                { color: '#0180A9', spiral: 'img/spiral2.png', bg: 'img/cbc_bg_2.png' },
+                { color: '#D08096', spiral: 'img/spiral3.png', bg: 'img/cbc_bg_3.png' },
+                { color: '#996931', spiral: 'img/spiral4.png', bg: 'img/cbc_bg_4.png' }
+            ];
+            var theme = themes[Math.floor(Math.random() * themes.length)];
+            var v = parseInt(theme.color.slice(1), 16);
+            var rgb = [(v >> 16) & 255, (v >> 8) & 255, v & 255].join(', ');
+            document.documentElement.style.setProperty('--accent', theme.color);
+            document.documentElement.style.setProperty('--accent-rgb', rgb);
+            document.documentElement.style.setProperty('--bg-image', 'url(' + theme.bg + ')');
+            window.__cbcTheme = theme;
+        })();
+    </script>
 </head>
 <body>
-    <div class="main-layout">
-        <div class="left-col">
-            <h1 class="title" id="mainTitle">Consumption Book Club</h1>
-            <p class="subtitle" id="mainSubtitle">A literary and culinary event series.</p>
-            <a href="https://www.index-space.org/collections/happenings" target="_blank" class="next-event-btn">next consumption book club: annihilation by jeff vandermeer</a>
-            <div class="image-carousel desktop-carousel">
-                <img src="img/pic1.PNG" alt="Carousel Image" class="carousel-image active">
-                <img src="img/pic2.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic3.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic4.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic5.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic6.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic7.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic8.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/spiral.PNG" alt="Spiral Overlay" class="spiral-overlay">
-            </div>
-            <!-- Mobile-only carousel -->
-            <div class="image-carousel mobile-only">
-                <img src="img/pic1.PNG" alt="Carousel Image" class="carousel-image active">
-                <img src="img/pic2.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic3.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic4.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic5.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic6.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic7.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/pic8.PNG" alt="Carousel Image" class="carousel-image">
-                <img src="img/spiral.PNG" alt="Spiral Overlay" class="spiral-overlay">
-            </div>
-            <div class="newsletter-container">
-                <input type="email" id="emailInput" class="email-input" placeholder="your email">
-                <button class="btn" id="subscribeBtn">stay tuned</button>
-                <div class="checkmark" id="checkmark">✓</div>
-            </div>
 
-            <div id="defaultContent">
-                <p class="description">
-     There is something eating at all of us. Whether it be our ideas, our obsessions, our cravings, our hunger—we are all looking to feed that which gives our life flavor. "Consumer culture" gives us quick-fixes that leave us always wanting more, but lack the staying power that comes from really connecting to that which we consume. We are overwhelmed with opportunities to spur our hunger, but what does it take to really be fed?
-     <br><br>
-     Consumption Book Club is a literary and culinary event series surrounding books that explores topics of "consumption"—what we consume, what we are consumed by, and what consumes us. We'll dig into these themes through guided discussions and embodied activities while working through a menu inspired by the books we read. Through these events, we hope to help shape counter-consumer-culture, where instead of feeling driven towards buying into short lived products and experiences in order to feel connected to each other, we intentionally spend our time and attention towards consuming that which actually feeds us: connecting with our community, expanding our thoughts, and doing both over delicious, thoughtful, and satiating meals.
-                </p>
-                <p class="credits">
-                    A project by <a href="https://coletteestelle.squarespace.com/" target="_blank">Colette Estelle</a> and <a href="https://kylebarn.es" target="_blank">Kyle Barnes</a>.
-                </p>
-            </div>
-
-            <div id="eventDetailContent" class="hidden">
-                <div id="eventDetailText" class="event-detail-text"></div>
-                <div id="eventGallery" class="event-gallery"></div>
-            </div>
-
+    <div class="floating-flyers">
+        <div class="orb" data-event="light-eaters">
+            <img src="img/cbc4_flyer.png" alt="Light Eaters flyer" class="orb-img">
+            <span class="orb-label">The Light Eaters</span>
         </div>
-
-        <div class="col-divider"></div>
-
-        <div class="right-col">
-            <img src="img/cbc3_flyer.png" class="flyer-img" alt="Annihilation Event" data-title="Annihilation" data-event="annihilation">
-            <img src="img/cbc2_flyer.png" class="flyer-img" alt="Paradise Rot Event" data-title="Paradise Rot" data-event="paradise-rot">
-            <img src="img/cbc1_flyer.png" class="flyer-img" alt="Land of Milk and Honey Event" data-title="Land of Milk and Honey" data-event="land-of-milk-and-honey">
+        <div class="orb" data-event="annihilation">
+            <img src="img/cbc3_flyer.png" alt="Annihilation flyer" class="orb-img">
+            <span class="orb-label">Annihilation</span>
+        </div>
+        <div class="orb" data-event="paradise-rot">
+            <img src="img/cbc2_flyer.png" alt="Paradise Rot flyer" class="orb-img">
+            <span class="orb-label">Paradise Rot</span>
+        </div>
+        <div class="orb" data-event="land-of-milk-and-honey">
+            <img src="img/cbc1_flyer.png" alt="Land of Milk and Honey flyer" class="orb-img">
+            <span class="orb-label">Land of Milk and Honey</span>
         </div>
     </div>
 
-    <div class="mobile-dock">
-        <img src="img/cbc3_flyer.png" class="dock-img" alt="Annihilation" data-title="Annihilation" data-event="annihilation">
-        <img src="img/cbc2_flyer.png" class="dock-img" alt="Paradise Rot" data-title="Paradise Rot" data-event="paradise-rot">
-        <img src="img/cbc1_flyer.png" class="dock-img" alt="Land of Milk and Honey" data-title="Land of Milk and Honey" data-event="land-of-milk-and-honey">
-    </div>
+    <main class="center-col">
+        <h1 class="title" id="mainTitle">Consumption <br>Book Club</h1>
+        <p class="subtitle credits">A literary and culinary event series by <a href="https://coletteestelle.squarespace.com/" target="_blank">Colette Estelle</a> and <a href="https://kylebarn.es" target="_blank">Kyle Barnes</a>.</p>
+
+        <div class="newsletter-container">
+            <input type="email" id="emailInput" class="email-input" placeholder="your email">
+            <button class="btn" id="subscribeBtn">stay tuned</button>
+            <div class="checkmark" id="checkmark">✓</div>
+        </div>
+
+        <div class="image-carousel">
+            <img src="img/pic1.png" alt="Carousel Image" class="carousel-image active">
+            <img src="img/pic2.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic3.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic4.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic5.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic6.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic7.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic8.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic9.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic10.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/pic11.png" alt="Carousel Image" class="carousel-image">
+            <img src="img/spiral1.png" alt="Spiral Overlay" class="spiral-overlay" id="spiralOverlay">
+        </div>
+
+        <div id="defaultContent">
+            <p class="description">
+ There is something eating at all of us. Whether it be our ideas, our obsessions, our cravings, our hunger—we are all looking to feed that which gives our life flavor. "Consumer culture" gives us quick-fixes that leave us always wanting more, but lack the staying power that comes from really connecting to that which we consume. We are overwhelmed with opportunities to spur our hunger, but what does it take to really be fed?
+ <br><br>
+ Consumption Book Club is a literary and culinary event series surrounding books that explores topics of "consumption"—what we consume, what we are consumed by, and what consumes us. We'll dig into these themes through guided discussions and embodied activities while working through a menu inspired by the books we read. Through these events, we hope to help shape counter-consumer-culture, where instead of feeling driven towards buying into short lived products and experiences in order to feel connected to each other, we intentionally spend our time and attention towards consuming that which actually feeds us: connecting with our community, expanding our thoughts, and doing both over delicious, thoughtful, and satiating meals.
+            </p>
+        </div>
+
+        <div id="eventDetailContent" class="hidden">
+            <h2 class="event-title" id="eventTitle"></h2>
+            <p class="event-subtitle" id="eventSubtitle"></p>
+            <div class="event-carousel" id="eventCarousel">
+                <div class="event-carousel-track" id="eventCarouselTrack"></div>
+                <button class="carousel-arrow carousel-prev" id="carouselPrev" aria-label="Previous image">&#8249;</button>
+                <button class="carousel-arrow carousel-next" id="carouselNext" aria-label="Next image">&#8250;</button>
+            </div>
+            <div id="eventDetailText" class="event-detail-text"></div>
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
