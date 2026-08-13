@@ -116,7 +116,18 @@ body::before {
 .subtitle {
     font-size: 1.1rem;
     line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.zine-invite {
+    font-size: 0.95rem;
+    text-decoration: underline;
+    cursor: pointer;
     margin-bottom: 24px;
+}
+
+.zine-invite:hover {
+    opacity: 0.7;
 }
 
 /* ── Newsletter ── */
@@ -261,14 +272,18 @@ body a:hover {
 .event-carousel {
     position: relative;
     width: 100%;
+    aspect-ratio: 4 / 3;
     margin-bottom: 20px;
     border-radius: 6px;
     overflow: hidden;
 }
 
 .carousel-slide {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
     display: none;
 }
 
@@ -312,6 +327,50 @@ body a:hover {
 
 .event-detail-text p {
     margin-bottom: 14px;
+}
+
+/* ── Zines ── */
+#zineContent {
+    width: 100%;
+}
+
+.zine-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    width: 100%;
+}
+
+.zine-card {
+    text-align: left;
+}
+
+.zine-title {
+    font-size: 1.3rem;
+    line-height: 1.1;
+    margin-bottom: 6px;
+}
+
+.zine-description {
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.zine-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.zine-buy-btn {
+    display: inline-block;
+    font-size: 0.9rem;
+    padding: 8px 20px;
+    text-decoration: none;
 }
 
 /* ── Utility ── */

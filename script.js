@@ -41,6 +41,38 @@ const eventsData = {
     }
 };
 
+// Placeholder copy/links — swap in real titles/descriptions/prices/purchase URLs later.
+const zinesData = [
+    {
+        title: 'The Light Eaters Zine',
+        description: 'A zine full of recipes, illustrations, and writings including features from our guest chefs.',
+        price: '$10',
+        purchaseUrl: 'https://buy.stripe.com/9B6cN6bJm73v4ADbgF5wI06',
+        gallery: ['img/zine/zine4_1.jpg', 'img/zine/zine4_2.jpg']
+    },
+    {
+        title: 'Annihilation Zine',
+        description: 'A cook book zine of recipes, illustrations, and writings from our Annihilation gathering.',
+        price: '$10',
+        purchaseUrl: 'https://buy.stripe.com/6oUcN64gU87z5EH3Od5wI05',
+        gallery: ['img/zine/zine3_1.jpg', 'img/zine/zine3_2.jpg', 'img/zine/zine3_3.jpg', 'img/zine/zine3_4.jpg']
+    },
+    {
+        title: 'Paradise Rot Zine',
+        description: 'Recipes, writing, and artwork inspired by our Paradise Rot sourdough pretzel-making session.',
+        price: '$10',
+        purchaseUrl: 'https://buy.stripe.com/6oUdRacNqafHffhbgF5wI04',
+        gallery: ['img/zine/zine2_1.jpg', 'img/zine/zine2_2.jpg', 'img/zine/zine2_3.jpg', 'img/zine/zine2_4.jpg', 'img/zine/zine2_5.jpg']
+    },
+    {
+        title: 'Land of Milk and Honey Zine',
+        description: 'A commemorative cook book zine with recipes, illustrations, and writing from our Land of Milk and Honey gathering.',
+        price: '$10',
+        purchaseUrl: 'https://buy.stripe.com/dRm28sdRu3Rj4ADgAZ5wI03',
+        gallery: ['img/zine/zine1_1.jpg', 'img/zine/zine1_2.jpg', 'img/zine/zine1_3.jpg', 'img/zine/zine1_4.jpg']
+    }
+];
+
 document.addEventListener('DOMContentLoaded', function () {
 
     // ── Random accent theme (color set in <head> to avoid a flash) ────
@@ -64,12 +96,51 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Orb click → event detail ────────────────────────────────────
     const defaultContent = document.getElementById('defaultContent');
     const eventDetailContent = document.getElementById('eventDetailContent');
+    const zineContent = document.getElementById('zineContent');
+    const zineGrid = document.getElementById('zineGrid');
+    const zineInvite = document.getElementById('zineInvite');
     const eventTitle = document.getElementById('eventTitle');
     const eventSubtitle = document.getElementById('eventSubtitle');
     const eventDetailText = document.getElementById('eventDetailText');
     const mainTitle = document.getElementById('mainTitle');
     const newsletterContainer = document.querySelector('.newsletter-container');
     let activeEvent = null;
+
+    // ── Reusable carousel: builds slides into a container, auto-advances,
+    // and lets prev/next arrows override the timer ──────────────────────
+    function createCarousel(container, images, intervalMs) {
+        const track = container.querySelector('.event-carousel-track');
+        const prevBtn = container.querySelector('.carousel-prev');
+        const nextBtn = container.querySelector('.carousel-next');
+        track.innerHTML = images
+            .map((src, i) => `<img src="${src}" alt="" class="carousel-slide${i === 0 ? ' active' : ''}">`)
+            .join('');
+        const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+        let index = 0;
+        let timer = null;
+
+        function show(i) {
+            if (!slides.length) return;
+            slides[index].classList.remove('active');
+            index = (i + slides.length) % slides.length;
+            slides[index].classList.add('active');
+        }
+
+        function restart() {
+            clearInterval(timer);
+            timer = setInterval(() => show(index + 1), intervalMs);
+        }
+
+        function stop() {
+            clearInterval(timer);
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', () => { show(index - 1); restart(); });
+        if (nextBtn) nextBtn.addEventListener('click', () => { show(index + 1); restart(); });
+
+        restart();
+        return { stop };
+    }
 
     // ── Event gallery carousel: auto-advances every 2s, arrows override ──
     const eventCarouselTrack = document.getElementById('eventCarouselTrack');
@@ -118,27 +189,97 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function showDetail(eventKey) {
+    // ── Zine sale cards: each gets its own independent carousel ───────
+    let zineCarousels = [];
+
+    function stopZineCarousels() {
+        zineCarousels.forEach(c => c.stop());
+        zineCarousels = [];
+    }
+
+    function renderZines() {
+        zineGrid.innerHTML = zinesData
+            .map((zine, i) => `
+                <div class="zine-card">
+                    <div class="event-carousel" data-zine="${i}">
+                        <div class="event-carousel-track"></div>
+                        <button class="carousel-arrow carousel-prev" aria-label="Previous image">&#8249;</button>
+                        <button class="carousel-arrow carousel-next" aria-label="Next image">&#8250;</button>
+                    </div>
+                    <h3 class="zine-title">${zine.title}</h3>
+                    <p class="zine-description">${zine.description}</p>
+                    <div class="zine-meta">
+                        <span class="zine-price">${zine.price}</span>
+                        <a href="${zine.purchaseUrl}" class="btn zine-buy-btn" target="_blank" rel="noopener noreferrer">Purchase</a>
+                    </div>
+                </div>
+            `)
+            .join('');
+
+        zineCarousels = Array.from(zineGrid.querySelectorAll('.event-carousel')).map((el, i) =>
+            createCarousel(el, zinesData[i].gallery, 2000)
+        );
+    }
+
+    function hideAllPanels() {
+        defaultContent.classList.add('hidden');
+        eventDetailContent.classList.add('hidden');
+        zineContent.classList.add('hidden');
+        if (carousel) carousel.classList.add('hidden');
+        if (newsletterContainer) newsletterContainer.classList.add('hidden');
+        stopGalleryTimer();
+        stopZineCarousels();
+        activeEvent = null;
+    }
+
+    // ── Routing: each view gets a shareable #hash URL ──────────────────
+    const ZINES_ROUTE = 'zines';
+
+    function setRouteHash(hash) {
+        const url = hash ? `#${hash}` : location.pathname + location.search;
+        if (location.hash !== (hash ? `#${hash}` : '')) {
+            history.pushState(null, '', url);
+        }
+    }
+
+    function showDetail(eventKey, { updateUrl = true } = {}) {
+        hideAllPanels();
         const event = eventsData[eventKey];
         eventTitle.textContent = event.title;
         eventSubtitle.textContent = event.subtitle || '';
         eventDetailText.innerHTML = event.description;
         renderGallery(event.gallery || []);
-        defaultContent.classList.add('hidden');
-        if (carousel) carousel.classList.add('hidden');
-        if (newsletterContainer) newsletterContainer.classList.add('hidden');
         eventDetailContent.classList.remove('hidden');
         activeEvent = eventKey;
+        if (updateUrl) setRouteHash(eventKey);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function showIndex() {
-        eventDetailContent.classList.add('hidden');
+    function showZines({ updateUrl = true } = {}) {
+        hideAllPanels();
+        renderZines();
+        zineContent.classList.remove('hidden');
+        if (updateUrl) setRouteHash(ZINES_ROUTE);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showIndex({ updateUrl = true } = {}) {
+        hideAllPanels();
         defaultContent.classList.remove('hidden');
         if (carousel) carousel.classList.remove('hidden');
         if (newsletterContainer) newsletterContainer.classList.remove('hidden');
-        stopGalleryTimer();
-        activeEvent = null;
+        if (updateUrl) setRouteHash('');
+    }
+
+    function applyRoute() {
+        const hash = decodeURIComponent(location.hash.slice(1));
+        if (hash === ZINES_ROUTE) {
+            showZines({ updateUrl: false });
+        } else if (eventsData[hash]) {
+            showDetail(hash, { updateUrl: false });
+        } else {
+            showIndex({ updateUrl: false });
+        }
     }
 
     document.querySelectorAll('.orb').forEach(orb => {
@@ -153,8 +294,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (mainTitle) {
-        mainTitle.addEventListener('click', showIndex);
+        mainTitle.addEventListener('click', () => showIndex());
     }
+
+    if (zineInvite) {
+        zineInvite.addEventListener('click', () => showZines());
+    }
+
+    window.addEventListener('popstate', applyRoute);
+    applyRoute();
 
     // ── Floating orbs: bounce off screen edges like a screensaver ─────
     // Collision bounds use the flyer image's own size (not the container,
