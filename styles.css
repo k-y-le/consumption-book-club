@@ -356,7 +356,17 @@ body a:hover {
     font-style: normal;
     font-weight: normal;
     line-height: 1.5;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+.zine-dimensions {
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-bottom: 14px;
 }
 
 .zine-meta {

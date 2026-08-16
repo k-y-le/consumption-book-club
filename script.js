@@ -46,30 +46,34 @@ const zinesData = [
     {
         title: 'The Light Eaters Zine',
         description: 'A zine full of recipes, illustrations, and writings including features from our guest chefs.',
+        dimensions: '14 pages, 11 x 4.25 in',
         price: '$10',
         purchaseUrl: 'https://buy.stripe.com/9B6cN6bJm73v4ADbgF5wI06',
-        gallery: ['img/zine/zine4_1.jpg', 'img/zine/zine4_2.jpg']
+        gallery: ['img/zine/zine4_1.png', 'img/zine/zine4_2.png', 'img/zine/zine4_3.png']
     },
     {
         title: 'Annihilation Zine',
         description: 'A cook book zine of recipes, illustrations, and writings from our Annihilation gathering.',
+        dimensions: '14 pages, 8.5 x 11 in',
         price: '$10',
         purchaseUrl: 'https://buy.stripe.com/6oUcN64gU87z5EH3Od5wI05',
-        gallery: ['img/zine/zine3_1.jpg', 'img/zine/zine3_2.jpg', 'img/zine/zine3_3.jpg', 'img/zine/zine3_4.jpg']
+        gallery: ['img/zine/zine3_1.png', 'img/zine/zine3_2.png', 'img/zine/zine3_3.png']
     },
     {
         title: 'Paradise Rot Zine',
         description: 'Recipes, writing, and artwork inspired by our Paradise Rot sourdough pretzel-making session.',
+        dimensions: '14 pages, 5.5 x 5.5 in',
         price: '$10',
         purchaseUrl: 'https://buy.stripe.com/6oUdRacNqafHffhbgF5wI04',
-        gallery: ['img/zine/zine2_1.jpg', 'img/zine/zine2_2.jpg', 'img/zine/zine2_3.jpg', 'img/zine/zine2_4.jpg', 'img/zine/zine2_5.jpg']
+        gallery: ['img/zine/zine2_1.png', 'img/zine/zine2_2.png', 'img/zine/zine2_3.png']
     },
     {
         title: 'Land of Milk and Honey Zine',
         description: 'A commemorative cook book zine with recipes, illustrations, and writing from our Land of Milk and Honey gathering.',
+        dimensions: '14 pages, 8.5 x 5.5 in',
         price: '$10',
         purchaseUrl: 'https://buy.stripe.com/dRm28sdRu3Rj4ADgAZ5wI03',
-        gallery: ['img/zine/zine1_1.jpg', 'img/zine/zine1_2.jpg', 'img/zine/zine1_3.jpg', 'img/zine/zine1_4.jpg']
+        gallery: ['img/zine/zine1_1.png', 'img/zine/zine1_2.png', 'img/zine/zine1_3.png']
     }
 ];
 
@@ -208,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <h3 class="zine-title">${zine.title}</h3>
                     <p class="zine-description">${zine.description}</p>
+                    ${zine.dimensions ? `<p class="zine-dimensions">${zine.dimensions}</p>` : ''}
                     <div class="zine-meta">
                         <span class="zine-price">${zine.price}</span>
                         <a href="${zine.purchaseUrl}" class="btn zine-buy-btn" target="_blank" rel="noopener noreferrer">Purchase</a>
