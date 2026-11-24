@@ -309,6 +309,36 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('popstate', applyRoute);
     applyRoute();
 
+    // ── Next event pop-up ─────────────────────────────────────────────
+    const nextEventModal = document.getElementById('nextEventModal');
+    const nextEventClose = document.getElementById('nextEventClose');
+
+    if (nextEventModal) {
+        let seen = false;
+        try { seen = sessionStorage.getItem('cbcNextEventSeen') === '1'; } catch (e) {}
+
+        const closeNextEvent = () => {
+            nextEventModal.classList.remove('visible');
+            setTimeout(() => { nextEventModal.hidden = true; }, 400);
+            try { sessionStorage.setItem('cbcNextEventSeen', '1'); } catch (e) {}
+        };
+
+        if (!seen) {
+            setTimeout(() => {
+                nextEventModal.hidden = false;
+                requestAnimationFrame(() => nextEventModal.classList.add('visible'));
+            }, 800);
+        }
+
+        nextEventClose.addEventListener('click', closeNextEvent);
+        nextEventModal.addEventListener('click', e => {
+            if (e.target === nextEventModal) closeNextEvent();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !nextEventModal.hidden) closeNextEvent();
+        });
+    }
+
     // ── Newsletter ────────────────────────────────────────────────────
     async function handleEmailSubmit(emailInput, subscribeBtn, checkmark) {
         const email = emailInput.value.trim();
